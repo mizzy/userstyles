@@ -8,10 +8,11 @@ client = UserStyles.new({ :username => 'user', :password => 'password' })
 Dir.glob('*.css').each do |file|
   basename = File.basename(file, '.css')
   name     = "GitHub Style for paperboy-#{basename}"
-  style    = client.get_style(name)
 
   css = File.read(file)
+  css = %!@-moz-document url-prefix("https://github.com/organizations/paperboy-#{basename}"), url-prefix("https://github.com/paperboy-#{basename}") {! + css + "}"
 
+  style = client.get_style(name)
   if style
     client.update_style({
       :url         => style[:edit],
@@ -20,7 +21,6 @@ Dir.glob('*.css').each do |file|
       :css         => css
     })
   else
-    css = %!@-moz-document url-prefix("https://github.com/organizations/paperboy-#{basename}"), url-prefix("https://github.com/paperboy-#{basename}") {! + css + "}"
     client.add_style({
       :name        => name,
       :description => name,
